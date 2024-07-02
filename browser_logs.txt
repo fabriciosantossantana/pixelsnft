@@ -1,0 +1,2 @@
+{'level': 'WARNING', 'message': 'https://play.pixels.xyz/_next/static/chunks/eaafc78b.da0d4fad9f7cc571.js 3949 The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://goo.gl/7K7WLu', 'source': 'other', 'timestamp': 1719899720824}
+{'level': 'WARNING', 'message': 'https://play.pixels.xyz/_next/static/chunks/314.cfbdbb2f62715279.js 0:10731 "Texture 9d792ce318154647b00148eebcc4599a no frame 0"', 'source': 'console-api', 'timestamp': 1719899725858}
