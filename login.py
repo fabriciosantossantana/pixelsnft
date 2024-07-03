@@ -24,13 +24,16 @@ def select_game(driver):
         print(f"Erro ao selecionar o jogo: {e}")
 
 def login_to_game():
+    profile_select = input("Que profile quer usar? ")
+    profile_dir = f'Profile {profile_select}'
     user_data_dir = r'C:\Users\Karine\AppData\Local\Google\Chrome\User Data'
-    profile_dir = 'Profile 1'
     
     chrome_opt = uc.ChromeOptions()
     chrome_opt.add_argument(f'--user-data-dir={user_data_dir}')
     chrome_opt.add_argument(f'--profile-directory={profile_dir}')
     
+    print(f'Muito bem, {profile_dir} do Chrome sendo executado...')
+
     # Adicionando capacidade para capturar logs do navegador
     capabilities = DesiredCapabilities.CHROME
     capabilities['goog:loggingPrefs'] = {'browser': 'ALL'}
