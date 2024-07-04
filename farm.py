@@ -111,3 +111,8 @@ def farm():
         time.sleep(85)
         harvest()
         reposition()
+
+
+if __name__ == '__main__':
+    time.sleep(5)
+    farm()
