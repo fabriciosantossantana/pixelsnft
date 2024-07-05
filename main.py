@@ -20,14 +20,17 @@ if __name__ == "__main__":
 
             # Clica no botão do menu de terra para abrir o menu principal
             while True:
-                # energy = check_energy(driver)
+                energy = check_energy(driver)
                 # if energy <= 900:
                 #     go_to_sauna(driver)
                 #     if energy >= 998:
                 #         go_to_speck()
                 # else:
-                mine()
-                farm()
+                if energy <= 100:
+                    time.sleep(3600)
+                else: 
+                    mine()
+                    farm()
             # Mantém o programa em execução
         except Exception as e:
             print(f"Erro durante a execução: {e}")
