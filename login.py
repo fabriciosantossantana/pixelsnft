@@ -6,6 +6,7 @@ import undetected_chromedriver as uc
 from seleniumabsxy import coordsclicker
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
+
 def select_game(driver):
     try:
         # Locate the canvas element by its tag name, id, or class name
@@ -45,11 +46,11 @@ def login_to_game():
         return None
     
     coordsclicker.driver = driver
-    time.sleep(1)
+    time.sleep(3)
     
     try:
         driver.get(r"https://play.pixels.xyz/pixels")
-        time.sleep(1)
+        time.sleep(3)
         driver.fullscreen_window()
 
         # Esperar explicitamente até que o elemento esteja presente
@@ -76,6 +77,22 @@ def get_browser_logs(driver):
     logs = driver.get_log('browser')
     for log in logs:
         print(log)
+        
+def check_energy(driver):
+    try:
+        # Localizar o elemento span pelo seletor CSS
+        span_element = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, 'span.commons_coinBalance__d9sah.Hud_energytext__3PQZQ'))
+        )
+        # Obter o texto dentro do span
+        span_text = span_element.text
+        # Remover vírgulas e converter para float
+        span_value = float(span_text.replace(',', '.'))
+        return span_value
+    except Exception as e:
+        print(f"Erro ao capturar o valor do span: {e}")
+        return None
+
 
 if __name__ == "__main__":
     driver = login_to_game()

@@ -1,7 +1,8 @@
 from farm import farm
 from mine import mine
-from login import login_to_game
-from login import select_game
+from routine import go_to_sauna, go_to_speck
+from login import login_to_game, select_game, check_energy
+
 import time
 from game_interface import GameInterface
 
@@ -19,6 +20,12 @@ if __name__ == "__main__":
 
             # Clica no botão do menu de terra para abrir o menu principal
             while True:
+                # energy = check_energy(driver)
+                # if energy <= 900:
+                #     go_to_sauna(driver)
+                #     if energy >= 998:
+                #         go_to_speck()
+                # else:
                 mine()
                 farm()
             # Mantém o programa em execução
