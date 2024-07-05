@@ -1,4 +1,5 @@
 from farm import farm
+from mine import mine
 from login import login_to_game
 from login import select_game
 import time
@@ -17,9 +18,10 @@ if __name__ == "__main__":
             select_game(driver)
 
             # Clica no botão do menu de terra para abrir o menu principal
-            farm()
+            while True:
+                mine()
+                farm()
             # Mantém o programa em execução
-            time.sleep(999)
         except Exception as e:
             print(f"Erro durante a execução: {e}")
         finally:
