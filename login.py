@@ -87,7 +87,7 @@ def check_energy(driver):
         # Obter o texto dentro do span
         span_text = span_element.text
         # Remover vírgulas e converter para float
-        span_value = float(span_text.replace(',', '.'))
+        span_value = (span_text.replace(',', '.'))
         return span_value
     except Exception as e:
         print(f"Erro ao capturar o valor do span: {e}")
