@@ -1,11 +1,11 @@
 import time
+import pyautogui
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import undetected_chromedriver as uc
 from seleniumabsxy import coordsclicker
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-
 
 def select_game(driver):
     try:
@@ -32,7 +32,8 @@ def login_to_game():
     chrome_opt = uc.ChromeOptions()
     chrome_opt.add_argument(f'--user-data-dir={user_data_dir}')
     chrome_opt.add_argument(f'--profile-directory={profile_dir}')
-    
+    chrome_opt.add_argument('--disable-cache')
+        
     print(f'Muito bem, {profile_dir} do Chrome sendo executado...')
 
     # Adicionando capacidade para capturar logs do navegador
@@ -77,7 +78,11 @@ def get_browser_logs(driver):
     logs = driver.get_log('browser')
     for log in logs:
         print(log)
-        
+
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
 def check_energy(driver):
     try:
         # Localizar o elemento span pelo seletor CSS
@@ -86,23 +91,67 @@ def check_energy(driver):
         )
         # Obter o texto dentro do span
         span_text = span_element.text
-        # Remover vírgulas e converter para float
-        span_value = (span_text.replace(',', '.'))
+
+        # Verificar se o valor contém vírgula
+        if ',' in span_text:
+            # Substituir a vírgula por um ponto e converter para float
+            span_value = float(span_text.replace(',', '.'))
+        else:
+            # Remover ponto e converter para int
+            span_value = int(span_text.replace('.', ''))
+
+        # Converter float para int se necessário
+        if isinstance(span_value, float):
+            span_value = int(span_value)
+
+      
         return span_value
     except Exception as e:
         print(f"Erro ao capturar o valor do span: {e}")
         return None
 
 
+def change_map(driver, url):
+    try:
+        driver.get(url)
+        time.sleep(5)  # Ajuste conforme necessário
+        
+        # Recarregar a página simulando Ctrl + R
+        driver.execute_script("location.reload()")
+        
+        pyautogui.hotkey('ctrl', 'f5')
+        time.sleep(6)  # Ajuste conforme necessário
+
+        # Verificar se o botão de login está presente e visível
+        try:
+            login_button = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, '.Intro_startbutton__QtxEz'))
+            )
+            WebDriverWait(driver, 10).until(
+                EC.visibility_of(login_button)
+            )
+            login_button.click()
+            print("Botão de login clicado novamente com sucesso!")
+        except Exception as e:
+            print("Botão de login não encontrado ou não visível.")
+    except Exception as e:
+        print(f"Erro ao mudar de mapa: {e}")
+
+    time.sleep(10)
+
 if __name__ == "__main__":
     driver = login_to_game()
     if driver:
         try:
-            select_game()
+            select_game(driver)
             time.sleep(10)  # Ajustar conforme necessário
             
             # Capturar logs do navegador
             get_browser_logs(driver)
+            
+            # Mudar de mapa
+            map_url = "https://play.pixels.xyz/pixels/DrunkenGooseInterior"
+            change_map(driver, map_url)
             
             time.sleep(999)  # Mantém o programa em execução
         except Exception as e:

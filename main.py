@@ -1,11 +1,54 @@
-from full_mine import full_mine
-from login import login_to_game, select_game, check_energy
-import pyautogui
-
 import time
+import pyautogui
+import keyboard
+from selenium import webdriver
+from login import login_to_game, select_game, check_energy
+from routine import go_to_sauna, go_to_speck
+from full_mine import full_mine
 from game_interface import GameInterface
 
-if __name__ == "__main__":
+running = True
+
+def toggle_running():
+    global running
+    running = not running
+    if running:
+        print("Retomando a execução...")
+    else:
+        print("Execução pausada. Pressione 'Ctrl + R' para retomar.")
+
+def run_game(driver):
+    energy = check_energy(driver)
+    print(energy)
+    if energy >= 950:
+        print(f'{energy} de energia.')
+        go_to_speck(driver)
+        full_mine()
+    elif energy <= 100:
+        print(f'Energia baixa, {energy}. Indo para sauna')
+        go_to_sauna(driver)
+        time.sleep(120)
+        print(energy)
+        if energy <= 100:
+            print('Energia não disponível, indo para piscina...')
+            pyautogui.keyDown('down')
+            time.sleep(3.2)
+            pyautogui.keyUp('down')
+            print('Pausa de 30 min na piscina para recarregar')
+            time.sleep(1800)
+            go_to_speck(driver)
+        else:
+            print('Energia recarregada com sucesso!')
+    else:
+        print('Minerando...')
+        full_mine()
+
+def main():
+    # Registra a combinação de teclas 'Ctrl + P' para pausar/resumir o programa
+    keyboard.add_hotkey('ctrl+p', toggle_running)
+    # Registra a combinação de teclas 'Ctrl + Q' para parar o programa
+    keyboard.add_hotkey('ctrl+q', lambda: exit())
+
     # Inicia o processo de login
     driver = login_to_game()
     if driver:
@@ -19,33 +62,16 @@ if __name__ == "__main__":
 
             # Clica no botão do menu de terra para abrir o menu principal
             while True:
-                energy = float(check_energy(driver))
-                # if energy <= 900:
-                #     go_to_sauna(driver)
-                #     if energy >= 998:
-                #         go_to_speck()
-                # else:
-                if energy <= 450:
+                if running:
+                    run_game(driver)
+                else:
+                    time.sleep(1)  # Aguarda um segundo antes de verificar novamente
 
-                    #use wine
-                    time.sleep(3)
-                    pyautogui.press('num2')
-                    pyautogui.moveTo(695, 368)
-                    time.sleep(0.25)
-                    pyautogui.click(695, 368, 2)
-                    time.sleep(0.25)
-                    pyautogui.press('num2')
-                
-                     #move to center
-                    time.sleep(0.2)
-                    pyautogui.keyDown('left')
-                    time.sleep(3.4)  
-                    pyautogui.keyUp('left')
-                else: 
-                    full_mine()
-            # Mantém o programa em execução
         except Exception as e:
             print(f"Erro durante a execução: {e}")
         finally:
             # Garante que o driver é encerrado corretamente
             driver.quit()
+
+if __name__ == "__main__":
+    main()

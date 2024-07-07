@@ -104,7 +104,8 @@ def full_mine():
     pyautogui.keyUp('left')
 
 if __name__ == '__main__':
-    time.sleep(2)
-    full_mine()
+    while  True:
+        time.sleep(2)
+        full_mine()
 
    
