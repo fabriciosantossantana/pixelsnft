@@ -5,7 +5,6 @@ from login import check_energy
 
 # Função para mover para a posição inicial
 def first_position():
-    time.sleep(0.2)
     pyautogui.keyDown('left')
     time.sleep(7)  
     pyautogui.keyUp('left')

@@ -15,30 +15,44 @@ def toggle_running():
     if running:
         print("Retomando a execução...")
     else:
-        print("Execução pausada. Pressione 'Ctrl + R' para retomar.")
+        print("Execução pausada. Pressione 'Ctrl + P' para retomar.")
 
 def run_game(driver):
     energy = check_energy(driver)
-    print(energy)
+    if energy is None:
+        print("Erro ao obter a energia. Verifique a função check_energy.")
+        return
+    energy = check_energy(driver)
+    print(f'Current energy: {energy}')
+    
     if energy >= 950:
-        print(f'{energy} de energia.')
+        print(f'{energy} de energia. Energia está cheia')
         go_to_speck(driver)
         full_mine()
     elif energy <= 100:
         print(f'Energia baixa, {energy}. Indo para sauna')
         go_to_sauna(driver)
-        time.sleep(120)
-        print(energy)
+        time.sleep(30)
+        
+        energy = check_energy(driver)  # Atualize o valor da energia após a sauna
+        if energy is None:
+            print("Erro ao obter a energia após a sauna. Verifique a função check_energy.")
+            return
+        
+        print(f'Energy after sauna: {energy}')
+        energy = check_energy(driver)
+        # ir para sauna free 
         if energy <= 100:
+            
             print('Energia não disponível, indo para piscina...')
-            pyautogui.keyDown('down')
-            time.sleep(3.2)
-            pyautogui.keyUp('down')
-            print('Pausa de 30 min na piscina para recarregar')
-            time.sleep(1800)
+            # pyautogui.keyDown('down')
+            # time.sleep(3.2)
+            # pyautogui.keyUp('down')
+            # print('Pausa de 30 min na piscina para recarregar')
+            time.sleep(3600)
             go_to_speck(driver)
         else:
-            print('Energia recarregada com sucesso!')
+            print(f'Energia é {energy} recarregada com sucesso!')
     else:
         print('Minerando...')
         full_mine()

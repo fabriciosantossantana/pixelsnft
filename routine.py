@@ -98,10 +98,10 @@ def go_to_speck(driver):
             second_button.click()
             print('Going to speck')
         except Exception as e:
-            print(f"Erro durante a execução de go_to_speck(): {e}")    
-    print('Going to speck')
+            print(f"Erro durante a execução de go_to_speck(): {e}") 
 
-    time.sleep(10)
+    time.sleep(15)
+    print('Chegou na speck. Reposicionando personagem na land...')
     pyautogui.keyDown('left')
     time.sleep(0.2)  
     pyautogui.keyUp('left')
@@ -110,7 +110,6 @@ def go_to_speck(driver):
     pyautogui.keyDown('up')
     time.sleep(3)  
     pyautogui.keyUp('up')
-    time.sleep(0.1)
 
 
 if __name__ == '__main__':
