@@ -35,6 +35,8 @@ def click_cords(sub_coordenadas):
         pyautogui.moveTo(x, y)
         time.sleep(0.1)  # Pequena pausa antes de clicar
         pyautogui.click()
+        time.sleep(0.1) 
+        pyautogui.click()
         print(f"Clicou em {name} nas coordenadas ({x}, {y})")
 
 # Função para obter fatias do dicionário

@@ -7,6 +7,22 @@ import undetected_chromedriver as uc
 from seleniumabsxy import coordsclicker
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
+
+
+def use_wine():
+    # Use wine
+    time.sleep(3)
+    pyautogui.press('num2')
+    pyautogui.moveTo(695, 368)
+    time.sleep(0.25)
+    pyautogui.click(695, 368)
+    time.sleep(0.25)
+    pyautogui.click(695, 368)
+    time.sleep(0.25)
+    pyautogui.press('num2')
+
+
+
 def select_game(driver):
     try:
         # Locate the canvas element by its tag name, id, or class name
@@ -54,7 +70,7 @@ def login_to_game():
         time.sleep(3)
         driver.fullscreen_window()
 
-        # Esperar explicitamente até que o elemento esteja presente
+            # Esperar explicitamente até que o elemento esteja presente
         continer = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, '.Intro_startbutton__QtxEz'))
         )
@@ -137,7 +153,7 @@ def change_map(driver, url):
     except Exception as e:
         print(f"Erro ao mudar de mapa: {e}")
 
-    time.sleep(10)
+    time.sleep(60)
 
 if __name__ == "__main__":
     driver = login_to_game()

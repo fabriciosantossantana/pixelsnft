@@ -9,6 +9,7 @@ from game_interface import GameInterface
 
 running = True
 
+
 def toggle_running():
     global running
     running = not running
@@ -29,7 +30,7 @@ def run_game(driver):
         print(f'{energy} de energia. Energia está cheia')
         go_to_speck(driver)
         full_mine()
-    elif energy <= 100:
+    elif energy <= 50:
         print(f'Energia baixa, {energy}. Indo para sauna')
         go_to_sauna(driver)
         time.sleep(30)
