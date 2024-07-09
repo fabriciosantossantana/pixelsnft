@@ -2,13 +2,14 @@ import time
 import pyautogui
 import keyboard
 from selenium import webdriver
-from login import login_to_game, select_game, check_energy
+from login import login_to_game, select_game, check_energy, use_wine
 from routine import go_to_sauna, go_to_speck
 from full_mine import full_mine
 from game_interface import GameInterface
+from cooking import cooking, first_position_cooking
+
 
 running = True
-
 
 def toggle_running():
     global running
@@ -30,7 +31,7 @@ def run_game(driver):
         print(f'{energy} de energia. Energia está cheia')
         go_to_speck(driver)
         full_mine()
-    elif energy <= 50:
+    elif energy <= 100:
         print(f'Energia baixa, {energy}. Indo para sauna')
         go_to_sauna(driver)
         time.sleep(30)
@@ -72,13 +73,17 @@ def main():
             interface = GameInterface(driver)
             time.sleep(10)
 
-            # Seleciona o jogo
+            # Seleciona o 1
             select_game(driver)
 
             # Clica no botão do menu de terra para abrir o menu principal
             while True:
+                energy = check_energy(driver)
                 if running:
-                    run_game(driver)
+                    if energy <= 40:
+                        use_wine()
+                    else:
+                        cooking(driver)
                 else:
                     time.sleep(1)  # Aguarda um segundo antes de verificar novamente
 
@@ -90,3 +95,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
