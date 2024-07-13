@@ -2,12 +2,11 @@ import time
 import pyautogui
 import keyboard
 from selenium import webdriver
-from login import login_to_game, select_game, check_energy, use_wine
-from routine import go_to_sauna, go_to_speck
+from login import login_to_game, select_game, check_energy
+from routine import go_to_sauna, go_to_speck, go_to_market, sell, buy, goldbox
 from full_mine import full_mine
 from game_interface import GameInterface
 from cooking import cooking, first_position_cooking
-
 
 running = True
 
@@ -19,80 +18,99 @@ def toggle_running():
     else:
         print("Execução pausada. Pressione 'Ctrl + P' para retomar.")
 
+
+def handle_high_energy(driver, energy):
+    print(f'{energy} de energia. Energia está cheia')
+    go_to_speck(driver)
+    time.sleep(2)
+    first_position_cooking()
+    crafting = cooking(driver)
+    # full_mine()
+
+    if crafting is not None and crafting <= 3:
+        go_to_market(driver)
+        sell(driver)
+        goldbox(driver)
+        buy(driver)
+        go_to_speck(driver)
+        first_position_cooking()
+        cooking(driver)
+
+def handle_low_energy(driver, energy):
+    print(f'Energia baixa, {energy}. Indo para sauna')
+    go_to_sauna(driver)
+    time.sleep(30)
+
+    energy = check_energy(driver)  # Atualize o valor da energia após a sauna
+    if energy is None:
+        print("Erro ao obter a energia após a sauna. Verifique a função check_energy.")
+        return
+    
+    print(f'Energia após a sauna: {energy}')
+    
+    if energy <= 100:
+        print('Energia não disponível, indo para piscina...')
+        time.sleep(7000)
+        go_to_speck(driver)
+        first_position_cooking()
+        cooking(driver)
+        # print('Minerando...')
+        # full_mine()
+    else:
+        print(f'Energia {energy} recarregada com sucesso!')
+
+def handle_normal_energy(driver):
+    #print('Minerando...')
+    #full_mine()
+
+    print('Cozinhando...')
+    crafting = cooking(driver)
+    if crafting is not None and crafting <= 3:
+        go_to_market(driver)
+        sell(driver)
+        goldbox(driver)
+        buy(driver)
+        go_to_speck(driver)
+        first_position_cooking()
+        cooking(driver)
+
 def run_game(driver):
     energy = check_energy(driver)
     if energy is None:
         print("Erro ao obter a energia. Verifique a função check_energy.")
         return
-    energy = check_energy(driver)
-    print(f'Current energy: {energy}')
     
-    if energy >= 950:
-        print(f'{energy} de energia. Energia está cheia')
-        go_to_speck(driver)
-        full_mine()
-    elif energy <= 100:
-        print(f'Energia baixa, {energy}. Indo para sauna')
-        go_to_sauna(driver)
-        time.sleep(30)
-        
-        energy = check_energy(driver)  # Atualize o valor da energia após a sauna
-        if energy is None:
-            print("Erro ao obter a energia após a sauna. Verifique a função check_energy.")
-            return
-        
-        print(f'Energy after sauna: {energy}')
-        energy = check_energy(driver)
-        # ir para sauna free 
-        if energy <= 100:
-            
-            print('Energia não disponível, indo para piscina...')
-            # pyautogui.keyDown('down')
-            # time.sleep(3.2)
-            # pyautogui.keyUp('down')
-            # print('Pausa de 30 min na piscina para recarregar')
-            time.sleep(3600)
-            go_to_speck(driver)
-        else:
-            print(f'Energia é {energy} recarregada com sucesso!')
+    print(f'Energia atual: {energy}')
+    
+    if energy >= 999:
+        handle_high_energy(driver, energy)
+    elif energy <= 30:
+        handle_low_energy(driver, energy)
     else:
-        print('Minerando...')
-        full_mine()
+        handle_normal_energy(driver)
 
 def main():
-    # Registra a combinação de teclas 'Ctrl + P' para pausar/resumir o programa
     keyboard.add_hotkey('ctrl+p', toggle_running)
-    # Registra a combinação de teclas 'Ctrl + Q' para parar o programa
     keyboard.add_hotkey('ctrl+q', lambda: exit())
 
-    # Inicia o processo de login
     driver = login_to_game()
     if driver:
         try:
-            # Cria uma instância da interface do jogo
             interface = GameInterface(driver)
             time.sleep(10)
 
-            # Seleciona o 1
             select_game(driver)
 
-            # Clica no botão do menu de terra para abrir o menu principal
             while True:
-                energy = check_energy(driver)
                 if running:
-                    if energy <= 40:
-                        use_wine()
-                    else:
-                        cooking(driver)
+                    run_game(driver)
                 else:
-                    time.sleep(1)  # Aguarda um segundo antes de verificar novamente
+                    time.sleep(1)
 
         except Exception as e:
             print(f"Erro durante a execução: {e}")
         finally:
-            # Garante que o driver é encerrado corretamente
             driver.quit()
 
 if __name__ == "__main__":
     main()
-    

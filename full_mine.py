@@ -1,7 +1,6 @@
 import time
 import pyautogui
 from itertools import islice
-from login import check_energy
 
 # Função para mover para a posição inicial
 def first_position():

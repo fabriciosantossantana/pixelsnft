@@ -36,7 +36,7 @@ def select_game(driver):
         # Wait for a few seconds to ensure the game is loaded
         time.sleep(5)
         
-        print('Game logado com sucesso')
+        print('Mapa carregado com sucesso')
     except Exception as e:
         print(f"Erro ao selecionar o jogo: {e}")
 
@@ -153,7 +153,7 @@ def change_map(driver, url):
     except Exception as e:
         print(f"Erro ao mudar de mapa: {e}")
 
-    time.sleep(60)
+    time.sleep(20)
 
 if __name__ == "__main__":
     driver = login_to_game()
