@@ -7,6 +7,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from seleniumabsxy import coordsclicker  # Certifique-se de que este módulo está corretamente importado
 from login import login_to_game, change_map, select_game # Importe sua função login_to_game do módulo login
 from cooking import first_position_cooking
+from selenium.webdriver.common.keys import Keys
 
 
 
@@ -43,86 +44,104 @@ def goldbox(driver):
     pass
 
 
+
+def search_and_buy(driver, item_name, iterations, quantity):
+    try:
+        time.sleep(5)
+        search_input = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, 'input.Marketplace_filter__3ynr2'))
+        )
+
+        search_input.send_keys(Keys.CONTROL + "a")
+        search_input.send_keys(Keys.DELETE)
+        
+        time.sleep(1)
+
+        search_input.send_keys(item_name)
+        
+        view_listing = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, '.commons_pushbutton__7Tpa3.Marketplace_viewListings__q_KfD'))
+        )
+        view_listing.click()
+
+        auto_buy = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.CLASS_NAME, "commons_pushbutton__7Tpa3.MarketplaceItemListings_buyListing__jYwuF"))
+        )
+        auto_buy.click()
+
+        for _ in range(iterations):
+            div_element = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.CLASS_NAME, "MarketplaceItemListings_listing__TyllF"))
+            )
+
+            # Encontrar os inputs dentro do div_element
+            amount_inputs = WebDriverWait(driver, 10).until(
+                EC.presence_of_all_elements_located((By.CSS_SELECTOR, ".MarketplaceItemListings_amount__IyJRp input[type='number']"))
+            )
+
+            # Garantir que temos pelo menos dois inputs
+            if len(amount_inputs) >= 2:
+                for input_field in amount_inputs:
+                    # Limpar o campo de maneira mais segura
+                    input_field.send_keys(Keys.CONTROL + "a")
+                    input_field.send_keys(Keys.DELETE)
+                
+                # Esperar um tempo curto para garantir que os campos foram limpos
+                time.sleep(0.5)
+                
+                # Preencher o primeiro input com a quantidade desejada
+                amount_inputs[0].send_keys(quantity)
+                
+                # Esperar um tempo curto para garantir que o valor foi inserido
+                time.sleep(0.5)
+                
+                # Preencher o segundo input com "9999"
+                amount_inputs[1].send_keys("9999")
+                
+                # Esperar um tempo curto para garantir que o valor foi inserido
+                time.sleep(0.5)
+
+            buttons = div_element.find_elements(By.CSS_SELECTOR, ".MarketplaceItemListings_buttons__LNftA button")
+            if buttons:
+                buttons[0].click()
+
+            close_button = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, '.commons_uikit__Nmsxg.commons_pushbutton__7Tpa3.Marketplace_button__x_SGP'))
+            )
+            close_button.click()
+
+            time.sleep(18)
+
+        pyautogui.moveTo(903, 165)
+        pyautogui.click()
+        time.sleep(1)
+
+    except Exception as e:
+        print(f"Error during search_and_buy for {item_name}: {e}")
+
 def buy(driver):
     try:
-        # Posicionar para comprar
         pyautogui.keyDown('right')
         time.sleep(3)
         pyautogui.keyUp('right')
 
-        # Abrir a loja
         coords = (830, 255)
         pyautogui.moveTo(coords)
         pyautogui.click()
 
-        # Esperar até que o mercado esteja aberto
         WebDriverWait(driver, 10).until(
             EC.presence_of_all_elements_located((By.CLASS_NAME, 'Marketplace_content__MWwNh'))
         )
 
-        def search_and_buy(item_name, iterations):
-            # Buscar pelo elemento do item
-            search_input = WebDriverWait(driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, 'input.Marketplace_filter__3ynr2'))
-            )
-            search_input.clear()
-            search_input.send_keys(item_name)
-            
-            # Clicar para visualizar a venda do item
-            view_listing = WebDriverWait(driver, 10).until(
-                EC.element_to_be_clickable((By.CSS_SELECTOR, '.commons_pushbutton__7Tpa3.Marketplace_viewListings__q_KfD'))
-            )
-            view_listing.click()
+        items_to_buy = [
+            ('Blue Grumpkin Puree', 3, '99'),
+            ('Grainbow Flour', 2, '99'),
 
-            # Clicar em "Automatic buy on"
-            auto_buy = WebDriverWait(driver, 10).until(
-                EC.element_to_be_clickable((By.CLASS_NAME, "commons_pushbutton__7Tpa3.MarketplaceItemListings_buyListing__jYwuF"))
-            )
-            auto_buy.click()
+        ]
 
-            for _ in range(iterations):
-                # Espera até que a div esteja carregada
-                div_element = WebDriverWait(driver, 10).until(
-                    EC.presence_of_element_located((By.CLASS_NAME, "MarketplaceItemListings_listing__TyllF"))
-                )
+        for item_name, iterations, quantity in items_to_buy:
+            search_and_buy(driver, item_name, iterations, quantity)
 
-                # Encontra os inputs dentro da div
-                amount_inputs = div_element.find_elements(By.CSS_SELECTOR, ".MarketplaceItemListings_amount__IyJRp input[type='number']")
-                if len(amount_inputs) >= 2:
-                    amount_inputs[0].clear()
-                    amount_inputs[0].send_keys("1")  # Insere "99" no primeiro input
-
-                    amount_inputs[1].clear()
-                    amount_inputs[1].send_keys("999")  # Insere "999" no segundo input
-
-                # Exibe os botões disponíveis e clica no botão "Buy"
-                buttons = div_element.find_elements(By.CSS_SELECTOR, ".MarketplaceItemListings_buttons__LNftA button")
-                if buttons:
-                    buttons[0].click()
-
-                # Aguardar até que o botão de fechar esteja visível
-                close_button = WebDriverWait(driver, 10).until(
-                    EC.presence_of_element_located((By.CSS_SELECTOR, '.commons_uikit__Nmsxg.commons_pushbutton__7Tpa3.Marketplace_button__x_SGP'))
-                )
-                close_button.click()
-
-                time.sleep(30)  # Aguarda um tempo antes da próxima iteração
-
-            # Fechar o mercado de venda do item atual
-            WebDriverWait(driver, 10).until(
-                EC.visibility_of_element_located((By.CLASS_NAME, "MarketplaceItemListings_container__Ta40D"))
-            )
-            close_button = driver.find_element(By.CSS_SELECTOR, ".MarketplaceItemListings_container__Ta40D button.commons_closeBtn__UobaL")
-            close_button.click()
-            time.sleep(1)
-
-        # Comprar Blue Grumpkin Puree
-        search_and_buy('Blue Grumpkin Puree', 3)
-
-        # Buscar e comprar Grainbow Flour
-        search_and_buy('Grainbow Flour', 2)
-
-        # Fechar o mercado
         WebDriverWait(driver, 10).until(
             EC.visibility_of_element_located((By.CLASS_NAME, "Marketplace_container__nQQtb"))
         )
@@ -130,7 +149,8 @@ def buy(driver):
         close_button_market.click()
 
     except Exception as e:
-        print(f"Erro durante a execução do BUY: {e}")
+        print(f"Error during the execution of BUY: {e}")
+
 
     
 
@@ -340,7 +360,7 @@ def go_to_market(driver):
     time.sleep(15)
 
     pyautogui.keyDown('right')
-    time.sleep(0.35)  
+    time.sleep(0.45)  
     pyautogui.keyUp('right')
 
     pyautogui.keyDown('up')
@@ -353,6 +373,12 @@ def go_to_speck(driver):
     # Encontrar o elemento da div principal
     div_element = WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.CLASS_NAME, 'Hud_topLeftBackground__OhgQS'))
+    )
+
+
+    # Aguarde até que o modal desapareça
+    WebDriverWait(driver, 10).until(
+    EC.invisibility_of_element_located((By.CLASS_NAME, "commons_modalBackdrop__EOPaN"))
     )
 
     # Encontrar e clicar no primeiro botão dentro da div principal
@@ -376,7 +402,7 @@ def go_to_speck(driver):
     second_button.click()
     print('Going to speck')
 
-    time.sleep(7)
+    time.sleep(15)
 
     pyautogui.keyDown('left')
     time.sleep(0.2)  

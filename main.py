@@ -2,7 +2,7 @@ import time
 import pyautogui
 import keyboard
 from selenium import webdriver
-from login import login_to_game, select_game, check_energy
+from login import login_to_game, select_game, check_energy, use_wine
 from routine import go_to_sauna, go_to_speck, go_to_market, sell, buy, goldbox
 from full_mine import full_mine
 from game_interface import GameInterface
@@ -22,9 +22,9 @@ def toggle_running():
 def handle_high_energy(driver, energy):
     print(f'{energy} de energia. Energia está cheia')
     go_to_speck(driver)
-    time.sleep(2)
     first_position_cooking()
     crafting = cooking(driver)
+    cooking(driver)
     # full_mine()
 
     if crafting is not None and crafting <= 3:
@@ -37,7 +37,8 @@ def handle_high_energy(driver, energy):
         cooking(driver)
 
 def handle_low_energy(driver, energy):
-    print(f'Energia baixa, {energy}. Indo para sauna')
+    print(f'Energia baixa, {energy}. Indo para Sauna')
+    #print(f'Energia baixa, {energy}. Indo para sauna')
     go_to_sauna(driver)
     time.sleep(30)
 
@@ -46,16 +47,21 @@ def handle_low_energy(driver, energy):
         print("Erro ao obter a energia após a sauna. Verifique a função check_energy.")
         return
     
-    print(f'Energia após a sauna: {energy}')
+    #print(f'Energia após a sauna: {energy}')
     
     if energy <= 100:
-        print('Energia não disponível, indo para piscina...')
-        time.sleep(7000)
+        print('Energia não disponível, usando vinho e voltando para land...')
+        # time.sleep(7000)
         go_to_speck(driver)
         first_position_cooking()
+        use_wine()
         cooking(driver)
+
         # print('Minerando...')
         # full_mine()
+        
+        print("Cozinhando...")
+        #print(f'Energia {energy} recarregada com sucesso!')
     else:
         print(f'Energia {energy} recarregada com sucesso!')
 
@@ -75,6 +81,7 @@ def handle_normal_energy(driver):
         cooking(driver)
 
 def run_game(driver):
+    time.sleep(5)
     energy = check_energy(driver)
     if energy is None:
         print("Erro ao obter a energia. Verifique a função check_energy.")
@@ -84,7 +91,7 @@ def run_game(driver):
     
     if energy >= 999:
         handle_high_energy(driver, energy)
-    elif energy <= 30:
+    elif energy <= 50:
         handle_low_energy(driver, energy)
     else:
         handle_normal_energy(driver)

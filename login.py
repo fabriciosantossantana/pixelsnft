@@ -15,9 +15,9 @@ def use_wine():
     pyautogui.press('num2')
     pyautogui.moveTo(695, 368)
     time.sleep(0.25)
-    pyautogui.click(695, 368)
+    pyautogui.click()
     time.sleep(0.25)
-    pyautogui.click(695, 368)
+    pyautogui.click()
     time.sleep(0.25)
     pyautogui.press('num2')
 
@@ -94,10 +94,6 @@ def get_browser_logs(driver):
     logs = driver.get_log('browser')
     for log in logs:
         print(log)
-
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 
 def check_energy(driver):
     try:
