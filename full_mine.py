@@ -4,6 +4,7 @@ from itertools import islice
 
 # Função para mover para a posição inicial
 def first_position():
+    time.sleep(5)
     pyautogui.keyDown('left')
     time.sleep(7)  
     pyautogui.keyUp('left')

@@ -7,6 +7,7 @@ from routine import go_to_sauna, go_to_speck, go_to_market, sell, buy, goldbox
 from full_mine import full_mine
 from game_interface import GameInterface
 from cooking import cooking, first_position_cooking
+from woodwork import woodwork, first_position_wood
 
 running = True
 
@@ -22,10 +23,10 @@ def toggle_running():
 def handle_high_energy(driver, energy):
     print(f'{energy} de energia. Energia está cheia')
     go_to_speck(driver)
-    first_position_cooking()
-    crafting = cooking(driver)
-    cooking(driver)
-    # full_mine()
+    first_position_wood()
+    crafting = woodwork(driver)
+    woodwork(driver)
+    #full_mine()
 
     if crafting is not None and crafting <= 3:
         go_to_market(driver)
@@ -33,8 +34,8 @@ def handle_high_energy(driver, energy):
         goldbox(driver)
         buy(driver)
         go_to_speck(driver)
-        first_position_cooking()
-        cooking(driver)
+        first_position_wood()
+        woodwork(driver)
 
 def handle_low_energy(driver, energy):
     print(f'Energia baixa, {energy}. Indo para Sauna')
@@ -51,37 +52,37 @@ def handle_low_energy(driver, energy):
     
     if energy <= 100:
         print('Energia não disponível, usando vinho e voltando para land...')
-        # time.sleep(7000)
+        time.sleep(7000)
         go_to_speck(driver)
-        first_position_cooking()
-        use_wine()
-        cooking(driver)
-
-        # print('Minerando...')
-        # full_mine()
+        first_position_wood()
+        #use_wine()
+        #cooking(driver)
+        woodwork(driver)
+        print('Trabalhando com madeira...')
+        #full_mine()
         
-        print("Cozinhando...")
+        #print("Cozinhando...")
         #print(f'Energia {energy} recarregada com sucesso!')
     else:
         print(f'Energia {energy} recarregada com sucesso!')
 
 def handle_normal_energy(driver):
-    #print('Minerando...')
+    print('Trabalhando com madeira...')
+    woodwork(driver)
     #full_mine()
 
-    print('Cozinhando...')
-    crafting = cooking(driver)
+    #print('Trabalhando com madeira...')
+    crafting = woodwork(driver)
     if crafting is not None and crafting <= 3:
         go_to_market(driver)
         sell(driver)
         goldbox(driver)
         buy(driver)
         go_to_speck(driver)
-        first_position_cooking()
-        cooking(driver)
+        first_position_wood()
+        woodwork(driver)
 
 def run_game(driver):
-    time.sleep(5)
     energy = check_energy(driver)
     if energy is None:
         print("Erro ao obter a energia. Verifique a função check_energy.")
@@ -91,7 +92,7 @@ def run_game(driver):
     
     if energy >= 999:
         handle_high_energy(driver, energy)
-    elif energy <= 50:
+    elif energy <= 20:
         handle_low_energy(driver, energy)
     else:
         handle_normal_energy(driver)
