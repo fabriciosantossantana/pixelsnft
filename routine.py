@@ -134,8 +134,8 @@ def buy(driver):
         )
 
         items_to_buy = [
-            ('Sawdust', 1, '45'),
-            ('Sap', 1, '90'),
+            ('Craftbark Log', 10, '99'),
+            ('Grumpkin Wine', 1, '20'),
 
         ]
 
@@ -186,7 +186,7 @@ def sell(driver):
             try:
                 # Espera até que a div com o span "Blue Grumpkin Loaf" esteja visível
                 element = WebDriverWait(driver, 10).until(
-                    EC.visibility_of_element_located((By.XPATH, '//span[text()="Glue"]/ancestor::div[@class="MarketplaceListings_listing__WlDih"]//button[text()="Add"]'))
+                    EC.visibility_of_element_located((By.XPATH, '//span[text()="Craftbark Plank"]/ancestor::div[@class="MarketplaceListings_listing__WlDih"]//button[text()="Add"]'))
                 )
     
                 # Clica no botão "Add"
@@ -234,7 +234,7 @@ def sell(driver):
                         # Clica no botão de fechar
                         button_close.click()
 
-                        time.sleep(120)
+                        time.sleep(300)
 
                 except Exception as e:
                     print(f"Erro ao abrir o item: {e}")  

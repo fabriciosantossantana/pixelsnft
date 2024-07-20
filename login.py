@@ -19,6 +19,8 @@ def use_wine():
     time.sleep(0.25)
     pyautogui.click()
     time.sleep(0.25)
+    pyautogui.click()
+    time.sleep(0.25)
     pyautogui.press('num2')
 
 
